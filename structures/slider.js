@@ -2,38 +2,42 @@
 
 const isEq = require('@codefeathers/iseq/isEq');
 
-const Window = require('./window');
+const Deck = require('./deck');
 
 const wrap = (f, ...x) => (...y) => f(...x, ...y);
 
 class Slider {
 	constructor (options) {
-		this.windowSize = options.window;
+		this.windowSize = options.size;
 		this.prefer = options.prefer;
 		this.accepting = options.accepting;
 	}
 
-	slide (to, from) {
+	slide (master, compare) {
+
 		const k = this.windowSize;
-		const host = new Window(...to);
-		const guest = new Window(...from);
-		const recurse = (window, i) => {
-			let x, y, z;
-			x = host.findIndex(wrap(isEq, window[0]));
-			let switcher = true;
-			if(x !== -1)
-				for (let j = 1; j < window.length; j++)
-					if(host.findIndexAfter(x, wrap(isEq, window[j])) === -1) {
-						switcher = false;
-						break;
-					}
-			if(switcher) return [ x, i ];
-			const newWindow = new Window(...guest.slice(++i, k));
+
+		const host = new Deck(...master);
+		const guest = new Deck(...compare);
+
+		const startSliding = (window, i) => {
+
+			const firstMatch = host.findIndex(wrap(isEq, window[0]));
+			if(firstMatch !== -1
+				&& window.every((item, j) => host.findIndexAfter(
+														firstMatch,
+														wrap(isEq, window[j])
+													)) !== -1
+			) return [ firstMatch, i ];
+
+			const newWindow = new Deck(...guest.slice(++i, k));
 			if(newWindow.length !== 0 && newWindow.length === k) return recurse(newWindow, i);
+
 			return [ -1, -1 ];
+
 		};
-		const window = new Window(...guest.slice(0, k));
-		const index = recurse(window, 0);
+		const window = new Deck(...guest.slice(0, k));
+		const index = startSliding(window, 0);
 		return index;
 	}
 };

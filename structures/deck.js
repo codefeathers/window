@@ -1,4 +1,4 @@
-class Window extends Array {
+class Deck extends Array {
 
 	constructor (...args) {
 		if(args.length === 1) return args;
@@ -33,4 +33,4 @@ class Window extends Array {
 	}
 };
 
-module.exports = Window;
+module.exports = Deck;
