@@ -1,10 +1,5 @@
 class Deck extends Array {
 
-	constructor (...args) {
-		if(args.length === 1) return args;
-		return super(...args);
-	}
-
 	recurse (fn) {
 		let index = 0;
 		const call = (arr, acc = []) => {
@@ -25,11 +20,6 @@ class Deck extends Array {
 			i++;
 		}
 		return -1;
-	}
-
-	empty () {
-		this.recurse(i => this.splice(i));
-		return this;
 	}
 };
 

@@ -17,8 +17,8 @@ class Slider {
 
 		const k = this.windowSize;
 
-		const host = new Deck(...master);
-		const guest = new Deck(...compare);
+		const host = Deck.from(master);
+		const guest = Deck.from(compare);
 
 		const startSliding = (window, i) => {
 
@@ -30,13 +30,13 @@ class Slider {
 													)) !== -1
 			) return [ firstMatch, i ];
 
-			const newWindow = new Deck(...guest.slice(++i, k));
+			const newWindow = Deck.from(guest.slice(++i, k));
 			if(newWindow.length !== 0 && newWindow.length === k) return recurse(newWindow, i);
 
 			return [ -1, -1 ];
 
 		};
-		const window = new Deck(...guest.slice(0, k));
+		const window = Deck.from(guest.slice(0, k));
 		const index = startSliding(window, 0);
 		return index;
 	}
