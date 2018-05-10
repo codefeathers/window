@@ -31,7 +31,7 @@ class Slider {
 			) return [ firstMatch, i ];
 
 			const newWindow = new Deck(...guest.slice(++i, k));
-			if(newWindow.length !== 0 && newWindow.length === k) return recurse(newWindow, i);
+			if(newWindow.length !== 0 && newWindow.length === k) return startSliding(newWindow, i);
 
 			return [ -1, -1 ];
 
