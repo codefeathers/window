@@ -1,6 +1,6 @@
 {
   "name": "@codefeathers/window",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "A sliding window algorithm to insert a new array into an existing one.",
   "main": "index.js",
   "scripts": {
