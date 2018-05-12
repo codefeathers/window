@@ -1,8 +1,6 @@
 'use strict';
 
-const isEq = require('@codefeathers/iseq/isEq');
-
-const Deck = require('./deck');
+const isEq = require('@codefeathers/iseq');
 
 const wrap = (f, ...x) => (...y) => f(...x, ...y);
 
@@ -13,32 +11,35 @@ class Slider {
 		this.accepting = options.accepting;
 	}
 
-	slide (master, compare) {
+	slide (host, guest) {
 
 		const k = this.windowSize;
 
-		const host = Deck.from(master);
-		const guest = Deck.from(compare);
+		const get = {
+			val: 0,
+			next: () => ++get.val,
+		}
 
 		const startSliding = (window, i) => {
 
 			const firstMatch = host.findIndex(wrap(isEq, window[0]));
-			if(firstMatch !== -1
-				&& window.every((item, j) => host.findIndexAfter(
-														firstMatch,
-														wrap(isEq, window[j])
-													)) !== -1
-			) return [ firstMatch, i ];
+			if(firstMatch !== -1) {
+				get.val = firstMatch;
+				if(window.every((item, j) => {
+					if(j === 0) return true;
+					return isEq(item, host[get.next()]);
+				})) return [ firstMatch, i ];
+			}
 
-			const newWindow = Deck.from(guest.slice(++i, k));
-			if(newWindow.length !== 0 && newWindow.length === k) return startSliding(newWindow, i);
+			const nextI = i + 1;
+			const newWindow = guest.slice(nextI, nextI + k);
+			if(newWindow.length === k) return startSliding(newWindow, nextI);
 
 			return [ -1, -1 ];
 
 		};
-		const window = Deck.from(guest.slice(0, k));
-		const index = startSliding(window, 0);
-		return index;
+		const window = guest.slice(0, k);
+		return startSliding(window, 0);
 	}
 };
 
