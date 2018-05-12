@@ -1,5 +1,5 @@
 'use strict';
 
-const Slider = require('./structures/slider');
+const Slider = require('./lib/slider');
 
 module.exports = Slider;
